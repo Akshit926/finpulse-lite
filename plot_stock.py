@@ -4,30 +4,17 @@ import os
 
 os.makedirs("images", exist_ok=True)
 
-stocks = [
-    "Reliance.NS",
-    "TCS",
-    "INFY",
-    "HDFCBANK",
-    "ICICIBANK",
-    "SBIN",
-    "ITC",
-    "LT",
-    "HINDUNILVR",
-    "KOTAKBANK"
-]
+stocks = ["RELIANCE","TCS","INFY","HDFCBANK","ICICIBANK","SBIN","ITC","LT","HINDUNILVR","KOTAKBANK"]
 
 for stock in stocks:
     try:
         print(f"Processing {stock}...")
-
         file_path = f"data/{stock}.csv"
-
-        data = pd.read_csv(file_path)
-
-        # Calculate moving averages
-        data["MA50"] = data["Close"].rolling(window=50).mean()
-        data["MA200"] = data["Close"].rolling(window=200).mean()
+        data = pd.read_csv(file_path, skiprows=2)
+        data.columns = ["Date", "Close", "High", "Low", "Open", "Volume"]
+        data["Close"] = pd.to_numeric(data["Close"])
+        data["MA50"] = data["Close"].rolling(50).mean()
+        data["MA200"] = data["Close"].rolling(200).mean()
 
         plt.figure(figsize=(12, 6))
 
@@ -36,8 +23,8 @@ for stock in stocks:
         plt.plot(data["MA200"], label="200 Day MA")
 
         plt.title(f"{stock} Stock Price")
-        plt.xlabel("Days")
-        plt.ylabel("Price (INR)")
+        plt.xlabel("Trading Days")
+        plt.ylabel("Price")
         plt.legend()
 
         plt.savefig(f"images/{stock}_chart.png")
@@ -49,4 +36,4 @@ for stock in stocks:
     except Exception as e:
         print(f"Error processing {stock}: {e}")
 
-print("All charts generated successfully!")
+print("All charts generated!")

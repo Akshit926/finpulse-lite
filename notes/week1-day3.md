@@ -1,5 +1,3 @@
-# June 3, 2026
-
 ### What I worked on today
 
 * Modified my stock data downloader to handle multiple stocks instead of just one.
