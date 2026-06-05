@@ -6,7 +6,7 @@ A stock represents ownership in a company. When a person buys a stock, they beco
 
 ---
 
-## 2. What does the "Close" price represent in stock data?
+## 2. What does the "Close" price represent in stock data
 
 The Close price is the final price at which a stock was traded when the market closes for the day. It is one of the most commonly used values in stock analysis because it reflects the market's final valuation of the stock for that trading session. Many technical indicators are calculated using the Close price.
 
