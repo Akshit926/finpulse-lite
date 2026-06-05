@@ -1,5 +1,3 @@
-## 2026-06-04
-
 ### What I worked on today
 
 * Read the Matplotlib Pyplot tutorial and learned the basics of data visualization.
