@@ -1,6 +1,6 @@
 import pandas as pd
 
-def run_backtest(df, signals, initial_capital=100000):
+def run_backtest(df, signals, initial_capital=100000 , transaction_cost=0.001):
 
     cash = initial_capital
     shares = 0
@@ -17,7 +17,8 @@ def run_backtest(df, signals, initial_capital=100000):
         # BUY
         if signal == 1 and not position:
 
-            shares = cash / price
+            buy_amount = cash * (1 - transaction_cost)
+            shares = buy_amount / price
             cash = 0
             position = True
 
@@ -32,7 +33,8 @@ def run_backtest(df, signals, initial_capital=100000):
         # SELL
         elif signal == -1 and position:
 
-            cash = shares * price
+            sale_value = shares * price
+            cash = sale_value * (1 - transaction_cost)
             shares = 0
             position = False
 
