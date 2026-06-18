@@ -22,13 +22,7 @@ def run_backtest(df, signals, initial_capital=100000 , transaction_cost=0.001):
             cash = 0
             position = True
 
-            trades.append([
-                date,
-                "BUY",
-                price,
-                shares,
-                cash
-            ])
+            trades.append([date,"BUY",price,shares,cash])
 
         # SELL
         elif signal == -1 and position:
