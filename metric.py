@@ -35,3 +35,26 @@ def max_drawdown(equity_curve):
     max_dd = drawdown.min() * 100
 
     return max_dd, start_date, end_date, drawdown
+
+import numpy as np
+
+def sharpe_ratio(
+    equity_curve,
+    risk_free_rate=0.065
+):
+
+    daily_returns = equity_curve.pct_change().dropna()
+
+    annual_return = (
+        daily_returns.mean() * 252
+    )
+
+    annual_volatility = (
+        daily_returns.std() * np.sqrt(252)
+    )
+
+    sharpe = (
+        annual_return - risk_free_rate
+    ) / annual_volatility
+
+    return sharpe
