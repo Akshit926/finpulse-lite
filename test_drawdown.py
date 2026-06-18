@@ -25,6 +25,7 @@ max_dd, start_date, end_date, drawdown = max_drawdown(
 )
 
 print("\n===== MAXIMUM DRAWDOWN =====")
-print(f"Max Drawdown: {max_dd:.2f}%")
+
+print(f"Maximum Drawdown: {max_dd:.2f}%")
 print(f"Start Date: {start_date}")
 print(f"End Date: {end_date}")

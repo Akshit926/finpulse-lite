@@ -1,5 +1,7 @@
+import os
 import pandas as pd
 import yfinance as yf
+import matplotlib.pyplot as plt
 
 from strategy_sma import generate_signals
 from backtest import run_backtest
@@ -24,7 +26,27 @@ max_dd, start_date, end_date, drawdown = max_drawdown(
     results["PortfolioValue"]
 )
 
-print("\n===== MAXIMUM DRAWDOWN =====")
-print(f"Max Drawdown: {max_dd:.2f}%")
-print(f"Start Date: {start_date}")
-print(f"End Date: {end_date}")
+os.makedirs("images", exist_ok=True)
+
+plt.figure(figsize=(12, 6))
+
+plt.plot(
+    drawdown.index,
+    drawdown * 100
+)
+
+plt.title("RELIANCE Strategy Drawdown Curve")
+plt.xlabel("Date")
+plt.ylabel("Drawdown (%)")
+plt.grid(True)
+
+plt.savefig(
+    "images/RELIANCE_drawdown.png",
+    dpi=300,
+    bbox_inches="tight"
+)
+
+plt.show()
+
+print("\nDrawdown chart saved to:")
+print("images/RELIANCE_drawdown.png")
