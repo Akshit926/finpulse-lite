@@ -168,3 +168,67 @@ def summary_report(
     print(
         f"Profit Factor: {stats['Profit Factor']:.2f}"
     )
+    
+import os
+
+def strategy_report(
+    equity_curve,
+    trade_log,
+    stock="RELIANCE.NS",
+    period="Last 5 Years"
+):
+
+    stats = trade_statistics(trade_log)
+
+    max_dd, start_date, end_date, _ = (
+        max_drawdown(equity_curve)
+    )
+
+    report = f"""
+# Strategy Report Card
+
+Strategy: SMA Crossover (50/200)
+
+Stock: {stock}
+
+Period: {period}
+
+---------------------------------
+
+Total Return: {total_return(equity_curve):.2f}%
+
+Annualized Return: {annualized_return(equity_curve):.2f}%
+
+Sharpe Ratio: {sharpe_ratio(equity_curve):.2f}
+
+Max Drawdown: {max_dd:.2f}%
+
+Win Rate: {stats['Win Rate']:.2f}%
+
+Number of Trades: {stats['Total Trades']}
+
+Profit Factor: {stats['Profit Factor']:.2f}
+
+Average Win: ₹{stats['Average Win']:.2f}
+
+Average Loss: ₹{stats['Average Loss']:.2f}
+
+---------------------------------
+"""
+
+    os.makedirs(
+        "reports",
+        exist_ok=True
+    )
+
+    with open(
+    "reports/RELIANCE_SMA_report.md",
+    "w",
+    encoding="utf-8"
+) as file:
+
+        file.write(report)
+
+    print(
+        "Report saved to reports/RELIANCE_SMA_report.md"
+    )

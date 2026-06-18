@@ -1,64 +1,77 @@
 ### What I worked on today
 
-* Learned about trade statistics and how they help evaluate a trading strategy beyond returns.
-* Implemented the `trade_statistics()` function.
-* Calculated total trades, win rate, average win, average loss, and profit factor.
-* Created a `summary_report()` function to display all strategy metrics in one place.
-* Generated a complete strategy report card for my SMA crossover strategy.
+* Learned about the Sharpe Ratio and its importance in evaluating trading strategies.
+* Studied how risk-adjusted returns are calculated.
+* Understood the difference between absolute returns and returns earned per unit of risk.
+* Implemented the `sharpe_ratio()` function in `metrics.py`.
+* Calculated daily returns from the equity curve.
+* Annualized returns and volatility using 252 trading days.
+* Tested the Sharpe Ratio on my Reliance SMA strategy.
 
 ### What I learned
 
-* Win rate alone does not determine whether a strategy is profitable.
-* A strategy can have a high win rate but still perform poorly if losses are larger than gains.
-* Profit Factor measures how much profit is generated for every rupee lost.
-* Trade statistics provide a deeper understanding of strategy behavior than returns alone.
-* Evaluating a strategy requires looking at multiple metrics together rather than focusing on a single number.
+* The Sharpe Ratio measures how much return a strategy generates for each unit of risk taken.
+* Daily returns can be annualized by multiplying the mean by 252.
+* Volatility is annualized by multiplying the standard deviation by √252.
+* A strategy with high returns is not necessarily a good strategy if it takes excessive risk.
+* Risk-adjusted performance is often more important than raw returns.
 
 ### Where I struggled
 
-* Understanding how to pair buy and sell trades into complete round-trips.
-* Calculating profit for individual trades correctly.
-* Debugging syntax and indentation errors while adding the summary report function.
+* Understanding why volatility is annualized using √252 instead of 252.
+* Interpreting what a negative Sharpe Ratio actually means.
+* Connecting the mathematical formula to the practical performance of my strategy.
 
-### How I solved problems (which Level helped most?)
+### Which Level helped most?
 
-* Experimentation helped me understand how trade profits were calculated.
-* Reading error messages carefully helped me fix syntax and indentation issues.
-* AI assistance helped explain trade statistics and their interpretation.
-* Testing the functions repeatedly helped verify the calculations.
+* Investopedia articles helped me understand the theory behind the Sharpe Ratio.
+* Working through examples helped me understand annualization.
+* AI assistance helped clarify the intuition behind risk-adjusted returns and the √252 factor.
+* Testing the metric on my own strategy made the concept much easier to understand.
 
 ### What I'll do tomorrow
 
-* Complete the final strategy report card and review all metrics together to understand the strengths and weaknesses of the strategy.
+* Calculate additional strategy statistics such as win rate and number of trades to continue building the strategy report card.
 
 ### One-sentence reflection
 
-Today I learned that a strategy's quality cannot be judged by win rate alone; risk, losses, and consistency matter just as much.
+Today I learned that a strategy should not only make money but also justify the risk taken to earn those returns.
 
 # Results
 
-Total Return: 4.55%
+### Sharpe Ratio
 
-Annualized Return: 0.91%
+-0.35
 
-Sharpe Ratio: -0.35
+# What does my Sharpe Ratio mean?
 
-Maximum Drawdown: -20.26%
+My strategy's Sharpe Ratio was **-0.35**, which is considered poor.
 
-Total Trades: 3
+A negative Sharpe Ratio means the strategy failed to generate enough return relative to the amount of risk taken. In fact, the strategy underperformed the assumed risk-free rate of 6.5%.
 
-Win Rate: 66.67%
+This tells me that although the strategy was functional and generated valid trading signals, it did not provide attractive risk-adjusted returns. An investor would likely have been better off investing in a safer asset rather than taking the additional risk of this strategy.
 
-Average Win: ₹8,000.89
+This was an important lesson because it showed me that returns alone do not tell the full story. Risk-adjusted metrics provide a much better picture of a strategy's overall quality.
 
-Average Loss: ₹-10,861.28
+# What does the Sharpe Ratio mean intuitively?
 
-Profit Factor: 1.47
+The Sharpe Ratio measures how much return a strategy generates for each unit of risk taken.
 
-# What do these results tell me?
+A higher Sharpe Ratio means the strategy is producing better returns relative to its volatility.
 
-My strategy won 2 out of every 3 trades, giving it a healthy win rate of 66.67%. However, the overall returns remained low because the losing trade was larger than the average winning trade.
+As a general rule:
 
-Although the Profit Factor of 1.47 suggests that the strategy made more money than it lost overall, the annualized return of only 0.91% and Sharpe Ratio of -0.35 indicate that the strategy did not generate attractive risk-adjusted returns.
+* Sharpe < 1 → Weak
+* Sharpe > 1 → Good
+* Sharpe > 2 → Excellent
+* Sharpe > 3 → Unusually high and should be examined carefully
 
-The results show that winning frequently is not enough. A successful strategy must also control losses, generate consistent returns, and outperform simple alternatives such as Buy-and-Hold.
+In simple terms, Sharpe Ratio answers the question:
+
+"Was the return worth the risk I took to achieve it?"
+
+A strategy with high returns but extremely high volatility may have a lower Sharpe Ratio than a strategy with slightly lower returns but much more consistent performance.
+
+This makes Sharpe Ratio one of the most widely used measures of risk-adjusted performance in quantitative finance.
+
+

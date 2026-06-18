@@ -1,77 +1,55 @@
 ### What I worked on today
 
-* Learned about the Sharpe Ratio and its importance in evaluating trading strategies.
-* Studied how risk-adjusted returns are calculated.
-* Understood the difference between absolute returns and returns earned per unit of risk.
-* Implemented the `sharpe_ratio()` function in `metrics.py`.
-* Calculated daily returns from the equity curve.
-* Annualized returns and volatility using 252 trading days.
-* Tested the Sharpe Ratio on my Reliance SMA strategy.
+* Learned about Maximum Drawdown and why it is one of the most important risk metrics in investing.
+* Read about peak-to-trough declines and how they affect investors psychologically and financially.
+* Implemented the `max_drawdown()` function in `metrics.py`.
+* Used Pandas' `cummax()` method to track the highest portfolio value reached so far.
+* Calculated the drawdown percentage for every day in the backtest.
+* Identified the worst drawdown along with its start and end dates.
+* Generated and saved a drawdown curve visualization.
 
 ### What I learned
 
-* The Sharpe Ratio measures how much return a strategy generates for each unit of risk taken.
-* Daily returns can be annualized by multiplying the mean by 252.
-* Volatility is annualized by multiplying the standard deviation by √252.
-* A strategy with high returns is not necessarily a good strategy if it takes excessive risk.
-* Risk-adjusted performance is often more important than raw returns.
+* Maximum Drawdown measures the largest percentage decline from a portfolio's peak to its lowest point before recovery.
+* A strategy can have good returns but still be difficult to hold if its drawdowns are too large.
+* `cummax()` is useful for tracking the highest portfolio value reached up to any point in time.
+* Risk metrics are just as important as return metrics when evaluating a trading strategy.
+* Investors often care more about avoiding large losses than maximizing gains.
 
 ### Where I struggled
 
-* Understanding why volatility is annualized using √252 instead of 252.
-* Interpreting what a negative Sharpe Ratio actually means.
-* Connecting the mathematical formula to the practical performance of my strategy.
+* Understanding the difference between a temporary decline and the actual maximum drawdown.
+* Visualizing how the rolling maximum is used to calculate drawdowns.
+* Debugging file naming issues while generating the drawdown chart.
 
-### Which Level helped most?
+### How I solved problems (which Level helped most?)
 
-* Investopedia articles helped me understand the theory behind the Sharpe Ratio.
-* Working through examples helped me understand annualization.
-* AI assistance helped clarify the intuition behind risk-adjusted returns and the √252 factor.
-* Testing the metric on my own strategy made the concept much easier to understand.
+* Investopedia articles helped me understand the concept of Maximum Drawdown.
+* Drawing the algorithm on paper made the calculation much easier to understand.
+* Experimenting with the drawdown curve helped me connect the formula to the actual portfolio performance.
+* AI assistance helped clarify the intuition behind drawdowns and risk measurement.
 
 ### What I'll do tomorrow
 
-* Calculate additional strategy statistics such as win rate and number of trades to continue building the strategy report card.
+* Implement volatility calculations and begin working on the Sharpe Ratio to measure risk-adjusted returns.
 
 ### One-sentence reflection
 
-Today I learned that a strategy should not only make money but also justify the risk taken to earn those returns.
+Today I learned that earning returns is important, but understanding the worst losses experienced along the way is equally important.
+
+
+# Why does Maximum Drawdown matter?
+
+Maximum Drawdown measures the worst decline an investor would have experienced while following a strategy. It helps answer an important question: "How much pain would I have had to tolerate to achieve these returns?"
+
+A strategy might generate high returns, but if it experiences very large drawdowns, many investors would struggle to stay invested during those periods. For example, a strategy earning 30% annually may look attractive, but if it loses 70% of its value at some point, most people would likely panic and exit before the recovery.
+
+This is why Maximum Drawdown is such an important risk metric. It shows the downside risk of a strategy and helps investors understand whether the returns are worth the emotional and financial stress required to achieve them.
+
 
 # Results
 
-### Sharpe Ratio
-
--0.35
-
-# What does my Sharpe Ratio mean?
-
-My strategy's Sharpe Ratio was **-0.35**, which is considered poor.
-
-A negative Sharpe Ratio means the strategy failed to generate enough return relative to the amount of risk taken. In fact, the strategy underperformed the assumed risk-free rate of 6.5%.
-
-This tells me that although the strategy was functional and generated valid trading signals, it did not provide attractive risk-adjusted returns. An investor would likely have been better off investing in a safer asset rather than taking the additional risk of this strategy.
-
-This was an important lesson because it showed me that returns alone do not tell the full story. Risk-adjusted metrics provide a much better picture of a strategy's overall quality.
-
-# What does the Sharpe Ratio mean intuitively?
-
-The Sharpe Ratio measures how much return a strategy generates for each unit of risk taken.
-
-A higher Sharpe Ratio means the strategy is producing better returns relative to its volatility.
-
-As a general rule:
-
-* Sharpe < 1 → Weak
-* Sharpe > 1 → Good
-* Sharpe > 2 → Excellent
-* Sharpe > 3 → Unusually high and should be examined carefully
-
-In simple terms, Sharpe Ratio answers the question:
-
-"Was the return worth the risk I took to achieve it?"
-
-A strategy with high returns but extremely high volatility may have a lower Sharpe Ratio than a strategy with slightly lower returns but much more consistent performance.
-
-This makes Sharpe Ratio one of the most widely used measures of risk-adjusted performance in quantitative finance.
-
-
+===== MAXIMUM DRAWDOWN =====
+Maximum Drawdown: -20.26%
+Start Date: 2024-07-08 00:00:00
+End Date: 2026-03-04 00:00:00
