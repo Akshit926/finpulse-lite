@@ -4,11 +4,12 @@ def summary_report(
 ):
 
     from metric import (
-        total_return,
-        annualized_return,
-        max_drawdown,
-        sharpe_ratio
-    )
+    total_return,
+    annualized_return,
+    max_drawdown,
+    sharpe_ratio,
+    trade_statistics
+)
 
     stats = trade_statistics(
         trade_log
