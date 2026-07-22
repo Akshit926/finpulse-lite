@@ -15,45 +15,48 @@ def run_backtest(
     portfolio_values = []
     trades = []
 
-    for date in df.index:
+    # Loop until the second-last day
+    for i in range(len(df) - 1):
 
-        # Get closing price
-        close_price = df.loc[date, "Close"]
+        date = df.index[i]
+        next_date = df.index[i + 1]
 
-        if isinstance(close_price, pd.Series):
-            price = float(close_price.iloc[0])
-        else:
-            price = float(close_price)
+        # Today's closing price (for portfolio valuation)
+        today_price = float(df.loc[date, "Close"])
 
+        # Next day's closing price (for trade execution)
+        next_price = float(df.loc[next_date, "Close"])
+
+        # Today's signal
         signal = signals.loc[date]
 
-        # BUY
+        # BUY on next day's price
         if signal == 1 and not position:
 
             buy_amount = cash * (1 - transaction_cost)
-            shares = buy_amount / price
+            shares = buy_amount / next_price
             cash = 0
             position = True
 
             trades.append([
-                date,
+                next_date,
                 "BUY",
-                price,
+                next_price,
                 shares,
                 cash
             ])
 
-        # SELL
+        # SELL on next day's price
         elif signal == -1 and position:
 
             shares_sold = shares
-            sale_value = shares_sold * price
+            sale_value = shares_sold * next_price
             cash = sale_value * (1 - transaction_cost)
 
             trades.append([
-                date,
+                next_date,
                 "SELL",
-                price,
+                next_price,
                 shares_sold,
                 cash
             ])
@@ -61,9 +64,13 @@ def run_backtest(
             shares = 0
             position = False
 
-        # Portfolio Value
-        portfolio_value = cash + (shares * price)
+        # Portfolio value at today's close
+        portfolio_value = cash + (shares * today_price)
         portfolio_values.append(portfolio_value)
+
+    # Add portfolio value for the final trading day
+    last_price = float(df["Close"].iloc[-1])
+    portfolio_values.append(cash + (shares * last_price))
 
     # Results DataFrame
     results = pd.DataFrame(index=df.index)
