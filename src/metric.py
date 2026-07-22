@@ -1,7 +1,9 @@
+import os
+import numpy as np
 import pandas as pd
 
-def total_return(equity_curve):
 
+def total_return(equity_curve):
     initial_value = equity_curve.iloc[0]
     final_value = equity_curve.iloc[-1]
 
@@ -9,7 +11,6 @@ def total_return(equity_curve):
 
 
 def annualized_return(equity_curve):
-
     initial_value = equity_curve.iloc[0]
     final_value = equity_curve.iloc[-1]
 
@@ -19,13 +20,9 @@ def annualized_return(equity_curve):
 
 
 def max_drawdown(equity_curve):
-
     rolling_max = equity_curve.cummax()
 
-    drawdown = (
-        (equity_curve - rolling_max)
-        / rolling_max
-    )
+    drawdown = (equity_curve - rolling_max) / rolling_max
 
     end_date = drawdown.idxmin()
 
@@ -35,30 +32,27 @@ def max_drawdown(equity_curve):
 
     return max_dd, start_date, end_date, drawdown
 
-import numpy as np
 
-def sharpe_ratio(
-    equity_curve,
-    risk_free_rate=0.065
-):
+def sharpe_ratio(equity_curve, risk_free_rate=0.065):
 
     daily_returns = equity_curve.pct_change(fill_method=None).dropna()
 
-    annual_return = (
-        daily_returns.mean() * 252
-    )
+    if daily_returns.empty:
+        return 0.0
 
-    annual_volatility = (
-        daily_returns.std() * np.sqrt(252)
-    )
+    annual_return = daily_returns.mean() * 252
 
-    sharpe = (
-        annual_return - risk_free_rate
-    ) / annual_volatility
+    annual_volatility = daily_returns.std() * np.sqrt(252)
 
-    return sharpe
+    # Prevent divide-by-zero
+    if annual_volatility == 0 or np.isnan(annual_volatility):
+        return 0.0
 
-    
+    sharpe = (annual_return - risk_free_rate) / annual_volatility
+
+    return float(sharpe)
+
+
 def trade_statistics(trade_log):
 
     profits = []
@@ -73,42 +67,34 @@ def trade_statistics(trade_log):
 
         shares = buy_trade["Shares"]
 
-        profit = (
-            sell_price - buy_price
-        ) * shares
+        profit = (sell_price - buy_price) * shares
 
         profits.append(profit)
 
     total_trades = len(profits)
 
-    winning_trades = [
-        p for p in profits if p > 0
-    ]
-
-    losing_trades = [
-        p for p in profits if p < 0
-    ]
+    winning_trades = [p for p in profits if p > 0]
+    losing_trades = [p for p in profits if p < 0]
 
     win_rate = (
-        len(winning_trades)
-        / total_trades
-        * 100
-    ) if total_trades > 0 else 0
+        len(winning_trades) / total_trades * 100
+        if total_trades > 0 else 0
+    )
 
     avg_win = (
-        sum(winning_trades)
-        / len(winning_trades)
-    ) if winning_trades else 0
+        sum(winning_trades) / len(winning_trades)
+        if winning_trades else 0
+    )
 
     avg_loss = (
-        sum(losing_trades)
-        / len(losing_trades)
-    ) if losing_trades else 0
+        sum(losing_trades) / len(losing_trades)
+        if losing_trades else 0
+    )
 
     profit_factor = (
-        sum(winning_trades)
-        / abs(sum(losing_trades))
-    ) if losing_trades else float("inf")
+        sum(winning_trades) / abs(sum(losing_trades))
+        if losing_trades else float("inf")
+    )
 
     return {
         "Total Trades": total_trades,
@@ -117,59 +103,26 @@ def trade_statistics(trade_log):
         "Average Loss": avg_loss,
         "Profit Factor": profit_factor
     }
-    
-def summary_report(
-    equity_curve,
-    trade_log
-):
 
-    stats = trade_statistics(
-        trade_log
-    )
 
-    max_dd, start_date, end_date, _ = (
-        max_drawdown(equity_curve)
-    )
+def summary_report(equity_curve, trade_log):
+
+    stats = trade_statistics(trade_log)
+
+    max_dd, start_date, end_date, _ = max_drawdown(equity_curve)
 
     print("\n===== STRATEGY REPORT CARD =====")
 
-    print(
-        f"Total Return: {total_return(equity_curve):.2f}%"
-    )
+    print(f"Total Return: {total_return(equity_curve):.2f}%")
+    print(f"Annualized Return: {annualized_return(equity_curve):.2f}%")
+    print(f"Sharpe Ratio: {sharpe_ratio(equity_curve):.2f}")
+    print(f"Max Drawdown: {max_dd:.2f}%")
+    print(f"Total Trades: {stats['Total Trades']}")
+    print(f"Win Rate: {stats['Win Rate']:.2f}%")
+    print(f"Average Win: ₹{stats['Average Win']:.2f}")
+    print(f"Average Loss: ₹{stats['Average Loss']:.2f}")
+    print(f"Profit Factor: {stats['Profit Factor']:.2f}")
 
-    print(
-        f"Annualized Return: {annualized_return(equity_curve):.2f}%"
-    )
-
-    print(
-        f"Sharpe Ratio: {sharpe_ratio(equity_curve):.2f}"
-    )
-
-    print(
-        f"Max Drawdown: {max_dd:.2f}%"
-    )
-
-    print(
-        f"Total Trades: {stats['Total Trades']}"
-    )
-
-    print(
-        f"Win Rate: {stats['Win Rate']:.2f}%"
-    )
-
-    print(
-        f"Average Win: ₹{stats['Average Win']:.2f}"
-    )
-
-    print(
-        f"Average Loss: ₹{stats['Average Loss']:.2f}"
-    )
-
-    print(
-        f"Profit Factor: {stats['Profit Factor']:.2f}"
-    )
-    
-import os
 
 def strategy_report(
     equity_curve,
@@ -180,9 +133,7 @@ def strategy_report(
 
     stats = trade_statistics(trade_log)
 
-    max_dd, start_date, end_date, _ = (
-        max_drawdown(equity_curve)
-    )
+    max_dd, start_date, end_date, _ = max_drawdown(equity_curve)
 
     report = f"""
 # Strategy Report Card
@@ -216,19 +167,13 @@ Average Loss: ₹{stats['Average Loss']:.2f}
 ---------------------------------
 """
 
-    os.makedirs(
-        "reports",
-        exist_ok=True
-    )
+    os.makedirs("reports", exist_ok=True)
 
     with open(
-    "reports/RELIANCE_SMA_report.md",
-    "w",
-    encoding="utf-8"
-) as file:
-
+        "reports/RELIANCE_SMA_report.md",
+        "w",
+        encoding="utf-8"
+    ) as file:
         file.write(report)
 
-    print(
-        "Report saved to reports/RELIANCE_SMA_report.md"
-    )
+    print("Report saved to reports/RELIANCE_SMA_report.md")

@@ -7,6 +7,9 @@ def run_backtest(
     initial_capital=100000,
     transaction_cost=0.001
 ):
+    # Handle empty input
+    if df.empty:
+        raise ValueError("Input DataFrame is empty")
 
     cash = initial_capital
     shares = 0
@@ -22,15 +25,23 @@ def run_backtest(
         next_date = df.index[i + 1]
 
         # Today's closing price (for portfolio valuation)
-        today_price = float(df.loc[date, "Close"])
+        today_close = df.loc[date, "Close"]
+        if isinstance(today_close, pd.Series):
+            today_price = float(today_close.iloc[0])
+        else:
+            today_price = float(today_close)
 
         # Next day's closing price (for trade execution)
-        next_price = float(df.loc[next_date, "Close"])
+        next_close = df.loc[next_date, "Close"]
+        if isinstance(next_close, pd.Series):
+            next_price = float(next_close.iloc[0])
+        else:
+            next_price = float(next_close)
 
         # Today's signal
         signal = signals.loc[date]
 
-        # BUY on next day's price
+        # BUY on next day's close
         if signal == 1 and not position:
 
             buy_amount = cash * (1 - transaction_cost)
@@ -46,7 +57,7 @@ def run_backtest(
                 cash
             ])
 
-        # SELL on next day's price
+        # SELL on next day's close
         elif signal == -1 and position:
 
             shares_sold = shares
@@ -68,8 +79,13 @@ def run_backtest(
         portfolio_value = cash + (shares * today_price)
         portfolio_values.append(portfolio_value)
 
-    # Add portfolio value for the final trading day
-    last_price = float(df["Close"].iloc[-1])
+    # Portfolio value on the final trading day
+    last_close = df["Close"].iloc[-1]
+    if isinstance(last_close, pd.Series):
+        last_price = float(last_close.iloc[0])
+    else:
+        last_price = float(last_close)
+
     portfolio_values.append(cash + (shares * last_price))
 
     # Results DataFrame
