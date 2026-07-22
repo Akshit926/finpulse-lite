@@ -3,12 +3,12 @@ def summary_report(
     trade_log
 ):
 
-    from metric import (
+    from .metric import (
     total_return,
     annualized_return,
     max_drawdown,
     sharpe_ratio,
-    trade_statistics
+    trade_statistics,
 )
 
     stats = trade_statistics(

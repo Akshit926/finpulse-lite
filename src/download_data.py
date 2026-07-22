@@ -2,30 +2,52 @@ import yfinance as yf
 import pandas as pd
 import os
 
-os.makedirs("data", exist_ok=True)
 
-stocks = [ "RELIANCE.NS","TCS.NS","INFY.NS","HDFCBANK.NS","ICICIBANK.NS","SBIN.NS","ITC.NS","LT.NS","HINDUNILVR.NS", "KOTAKBANK.NS"]
+def download_stock_data(symbol):
+    """
+    Download 5 years of daily stock data and save it to data/.
+    Returns the downloaded DataFrame.
+    """
 
-for stock in stocks:
-    try:
-        print(f"\nDownloading {stock}...")
+    os.makedirs("data", exist_ok=True)
 
-        data = yf.download(stock,period="5y",interval="1d",auto_adjust=True)
+    print(f"\nDownloading {symbol}...")
 
-        print("\nFirst 10 Rows:")
-        print(data.head(10))
+    df = yf.download(
+        symbol,
+        period="5y",
+        interval="1d",
+        auto_adjust=True,
+        progress=False
+    )
 
-        filename = stock.replace(".NS", "") + ".csv"
-        data.to_csv(f"data/{filename}")
+    filename = symbol.replace(".NS", "") + ".csv"
+    df.to_csv(f"data/{filename}")
 
-        print(f"Saved to data/{filename}")
-        print(f"Rows downloaded: {len(data)}")
-        print(f"Columns: {list(data.columns)}")
-        print("-" * 50)
+    print(f"Saved to data/{filename}")
+    print(f"Rows downloaded: {len(df)}")
 
-    except Exception as e:
-        print(f"Failed to download {stock}: {e}")
-        print("-" * 50)
-        continue
+    return df
 
-print("\nAll files processed!")
+
+if __name__ == "__main__":
+    stocks = [
+        "RELIANCE.NS",
+        "TCS.NS",
+        "INFY.NS",
+        "HDFCBANK.NS",
+        "ICICIBANK.NS",
+        "SBIN.NS",
+        "ITC.NS",
+        "LT.NS",
+        "HINDUNILVR.NS",
+        "KOTAKBANK.NS"
+    ]
+
+    for stock in stocks:
+        try:
+            download_stock_data(stock)
+        except Exception as e:
+            print(f"Failed to download {stock}: {e}")
+
+    print("\nAll files processed!")

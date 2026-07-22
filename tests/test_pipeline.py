@@ -1,6 +1,5 @@
-from pipeline import run_full_pipeline
-
-from strategy_sma import generate_signals
+from src.pipeline import run_full_pipeline
+from src.strategy_rsi import generate_rsi_signals
 
 stocks = [
     "RELIANCE.NS",
@@ -11,10 +10,6 @@ stocks = [
 ]
 
 for stock in stocks:
-
     print("=" * 60)
-
-    run_full_pipeline(
-        stock,
-        generate_signals
-    )
+    print(f"Running RSI Pipeline for {stock}")
+    run_full_pipeline(stock, generate_rsi_signals)

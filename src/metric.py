@@ -42,7 +42,7 @@ def sharpe_ratio(
     risk_free_rate=0.065
 ):
 
-    daily_returns = equity_curve.pct_change().dropna()
+    daily_returns = equity_curve.pct_change(fill_method=None).dropna()
 
     annual_return = (
         daily_returns.mean() * 252
