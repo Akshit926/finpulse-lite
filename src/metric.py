@@ -137,8 +137,35 @@ def strategy_report(
 
     report = f"""
 # Strategy Report Card
+def strategy_report(
+    equity_curve,
+    trade_log,
+    stock="RELIANCE.NS",
+    period="Last 5 Years",
+    strategy="SMA"
+):
 
-Strategy: SMA Crossover (50/200)
+    stats = trade_statistics(trade_log)
+
+    max_dd, start_date, end_date, _ = max_drawdown(equity_curve)
+
+    report = f"""
+# Strategy Report Card
+def strategy_report(
+    equity_curve,
+    trade_log,
+    stock="RELIANCE.NS",
+    period="Last 5 Years",
+    strategy="SMA"
+):
+
+    stats = trade_statistics(trade_log)
+
+    max_dd, start_date, end_date, _ = max_drawdown(equity_curve)
+
+    report = f"""# Strategy Report Card
+
+Strategy: {strategy}
 
 Stock: {stock}
 
@@ -169,11 +196,9 @@ Average Loss: ₹{stats['Average Loss']:.2f}
 
     os.makedirs("reports", exist_ok=True)
 
-    with open(
-        "reports/RELIANCE_SMA_report.md",
-        "w",
-        encoding="utf-8"
-    ) as file:
+    filename = f"reports/{stock.replace('.NS', '')}_{strategy}_report.md"
+
+    with open(filename, "w", encoding="utf-8") as file:
         file.write(report)
 
-    print("Report saved to reports/RELIANCE_SMA_report.md")
+    print(f"Report saved to {filename}")

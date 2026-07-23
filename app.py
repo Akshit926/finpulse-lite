@@ -1,10 +1,12 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import os
 
 from src.pipeline import run_full_pipeline
 from src.strategy_sma import generate_signals as sma_strategy
 from src.strategy_rsi import generate_rsi_signals as rsi_strategy
+
 
 # --------------------------------------------------
 # Page Configuration
@@ -23,21 +25,42 @@ Compare technical trading strategies with a Buy & Hold benchmark.
 Adjust parameters in the sidebar and explore the results instantly.
 """
 )
+leaderboard = None
 
+if os.path.exists("strategy_comparison.csv"):
+    import os
+import pandas as pd
+import streamlit as st
+
+leaderboard = None
+
+if os.path.exists("strategy_comparison.csv") and os.path.getsize("strategy_comparison.csv") > 0:
+    leaderboard = pd.read_csv("strategy_comparison.csv")
+else:
+    st.warning(
+        "Leaderboard not found. Run 'python run_all_stocks.py' first."
+    )
 # --------------------------------------------------
 # Sidebar
 # --------------------------------------------------
 st.sidebar.header("⚙ Strategy Settings")
 
+from src.nifty50 import NIFTY50
+
+stock_list = NIFTY50
+
+default_stock = st.session_state.get(
+    "selected_stock",
+    stock_list[0]
+)
+
+if default_stock not in stock_list:
+    stock_list.append(default_stock)
+
 stock = st.sidebar.selectbox(
     "Stock",
-    [
-        "RELIANCE.NS",
-        "TCS.NS",
-        "INFY.NS",
-        "HDFCBANK.NS",
-        "ICICIBANK.NS"
-    ]
+    stock_list,
+    index=stock_list.index(default_stock)
 )
 
 strategy = st.sidebar.selectbox(
@@ -125,10 +148,11 @@ buy_hold = results["BuyHoldValue"]
 # --------------------------------------------------
 # Tabs
 # --------------------------------------------------
-tab1, tab2 = st.tabs(
+tab1, tab2, tab3 = st.tabs(
     [
         "Strategy Dashboard",
-        "Comparison"
+        "Comparison",
+        "Leaderboard"
     ]
 )
 
@@ -339,3 +363,91 @@ with tab2:
     st.caption(
         "FinPulse Lite • Week 4 • Strategy Comparison Dashboard"
     )
+    
+# ==================================================
+# TAB 3 : Leaderboard
+# ==================================================
+
+with tab3:
+
+    st.subheader("Strategy Leaderboard")
+
+    if leaderboard is None:
+
+        st.warning("Run run_all_stocks.py first.")
+
+    else:
+
+        strategy_choice = st.selectbox(
+            "Strategy",
+            [
+                "SMA",
+                "RSI"
+            ],
+            key="leaderboard_strategy"
+        )
+
+        sharpe_col = (
+            "SMA Sharpe"
+            if strategy_choice == "SMA"
+            else "RSI Sharpe"
+        )
+
+        return_col = (
+            "SMA Return"
+            if strategy_choice == "SMA"
+            else "RSI Return"
+        )
+
+        leaderboard_sorted = leaderboard.sort_values(
+            by=sharpe_col,
+            ascending=False
+        )
+
+        st.markdown("## Top 10 Stocks")
+
+        st.dataframe(
+            leaderboard_sorted[
+                [
+                    "Stock",
+                    sharpe_col,
+                    return_col,
+                    "Better Strategy"
+                ]
+            ].head(10),
+            use_container_width=True,
+            hide_index=True
+        )
+
+        st.markdown("## Bottom 10 Stocks")
+
+        st.dataframe(
+            leaderboard_sorted[
+                [
+                    "Stock",
+                    sharpe_col,
+                    return_col,
+                    "Better Strategy"
+                ]
+            ].tail(10),
+            use_container_width=True,
+            hide_index=True
+        )
+
+        st.markdown("---")
+
+        st.subheader("View Stock Report")
+
+        selected_stock = st.selectbox(
+            "Choose Stock",
+            leaderboard_sorted["Stock"],
+            key="leaderboard_stock"
+        )
+
+        if st.button("Open Report"):
+
+            st.session_state.selected_stock = selected_stock
+
+            st.success(
+                f"{selected_stock} selected.\n\nChoose it from the sidebar to view the complete dashboard."
+            )

@@ -7,7 +7,7 @@ from src.metric import (
     sharpe_ratio,
     trade_statistics,
 )
-from src.summary_report import summary_report
+from src.metric import summary_report
 
 
 def run_full_pipeline(symbol, strategy_func):
