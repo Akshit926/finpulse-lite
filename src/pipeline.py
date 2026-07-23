@@ -22,6 +22,9 @@ def run_full_pipeline(symbol, strategy_func):
     # -----------------------------------
     df = download_stock_data(symbol)
 
+    if df.empty:
+        raise ValueError(f"No usable price data found for {symbol}.")
+
     # -----------------------------------
     # Step 2: Generate Signals
     # -----------------------------------
@@ -89,3 +92,4 @@ def run_full_pipeline(symbol, strategy_func):
         "metrics": metrics,
         "buy_hold_metrics": buy_hold_metrics,
     }
+    

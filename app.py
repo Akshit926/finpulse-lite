@@ -3,6 +3,7 @@ import pandas as pd
 import plotly.express as px
 import os
 
+from src.download_data import load_cached_stock_data
 from src.pipeline import run_full_pipeline
 from src.strategy_sma import generate_signals as sma_strategy
 from src.strategy_rsi import generate_rsi_signals as rsi_strategy
@@ -49,9 +50,17 @@ from src.nifty50 import NIFTY50
 
 stock_list = NIFTY50
 
+
+def _first_available_stock(stocks):
+    for ticker in stocks:
+        if not load_cached_stock_data(ticker).empty:
+            return ticker
+    return stocks[0]
+
+
 default_stock = st.session_state.get(
     "selected_stock",
-    stock_list[0]
+    _first_available_stock(stock_list)
 )
 
 if default_stock not in stock_list:
@@ -129,12 +138,18 @@ else:
 # --------------------------------------------------
 # Run Pipeline
 # --------------------------------------------------
-with st.spinner("Running Backtest..."):
-
-    output = run_full_pipeline(
-        stock,
-        strategy_func
+try:
+    with st.spinner("Running Backtest..."):
+        output = run_full_pipeline(
+            stock,
+            strategy_func
+        )
+except ValueError as exc:
+    st.error(
+        f"{stock} could not be backtested because no usable price data was found. "
+        f"{exc}"
     )
+    st.stop()
 
 st.success("Backtest Completed Successfully!")
 
