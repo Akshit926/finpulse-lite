@@ -13,23 +13,6 @@ from src.summary_report import summary_report
 def run_full_pipeline(symbol, strategy_func):
     """
     Runs the complete trading pipeline.
-
-    Parameters
-    ----------
-    symbol : str
-        Stock symbol (e.g. RELIANCE.NS)
-
-    strategy_func : function
-        Trading strategy function (SMA or RSI)
-
-    Returns
-    -------
-    dict
-        {
-            "results": Backtest DataFrame,
-            "trades": Trade Log,
-            "metrics": Performance Metrics
-        }
     """
 
     print(f"\nRunning Pipeline for {symbol}")
@@ -40,7 +23,7 @@ def run_full_pipeline(symbol, strategy_func):
     df = download_stock_data(symbol)
 
     # -----------------------------------
-    # Step 2: Generate Trading Signals
+    # Step 2: Generate Signals
     # -----------------------------------
     signals = strategy_func(df)
 
@@ -50,7 +33,7 @@ def run_full_pipeline(symbol, strategy_func):
     results, trades = run_backtest(df, signals)
 
     # -----------------------------------
-    # Step 4: Calculate Metrics
+    # Strategy Metrics
     # -----------------------------------
     total_ret = total_return(results["PortfolioValue"])
 
@@ -62,23 +45,17 @@ def run_full_pipeline(symbol, strategy_func):
         results["PortfolioValue"]
     )
 
-    max_dd, start_date, end_date, drawdown = max_drawdown(
+    max_dd, _, _, _ = max_drawdown(
         results["PortfolioValue"]
     )
 
     stats = trade_statistics(trades)
 
-    # -----------------------------------
-    # Print Strategy Report
-    # -----------------------------------
     summary_report(
         results["PortfolioValue"],
         trades
     )
 
-    # -----------------------------------
-    # Store Metrics
-    # -----------------------------------
     metrics = {
         "Total Return": total_ret,
         "Annualized Return": annual_ret,
@@ -92,10 +69,23 @@ def run_full_pipeline(symbol, strategy_func):
     }
 
     # -----------------------------------
+    # Buy & Hold Metrics
+    # -----------------------------------
+    buy_hold = results["BuyHoldValue"]
+
+    buy_hold_metrics = {
+        "Total Return": total_return(buy_hold),
+        "Annualized Return": annualized_return(buy_hold),
+        "Sharpe Ratio": sharpe_ratio(buy_hold),
+        "Max Drawdown": max_drawdown(buy_hold)[0],
+    }
+
+    # -----------------------------------
     # Return Everything
     # -----------------------------------
     return {
         "results": results,
         "trades": trades,
         "metrics": metrics,
+        "buy_hold_metrics": buy_hold_metrics,
     }
