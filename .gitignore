@@ -1,2 +1,22 @@
-data/ 
-venv/ 
+# Virtual Environment
+venv/
+
+# Python Cache
+__pycache__/
+*.py[cod]
+
+# Pytest
+.pytest_cache/
+
+# Data files (generated locally)
+data/
+
+# Streamlit
+.streamlit/
+
+# Jupyter (if you ever use notebooks)
+.ipynb_checkpoints/
+
+# OS files
+.DS_Store
+Thumbs.db
