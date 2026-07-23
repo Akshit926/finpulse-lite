@@ -1,8 +1,16 @@
 from pathlib import Path
-
+import streamlit as st
 import pandas as pd
 import yfinance as yf
+@st.cache_data
+def download_stock_data(ticker, period="5y"):
+    df = yf.download(ticker, period=period)
 
+    if isinstance(df.columns, pd.MultiIndex):
+        df.columns = df.columns.get_level_values(0)
+
+    df.dropna(inplace=True)
+    return df
 
 DATA_DIR = Path("data")
 
